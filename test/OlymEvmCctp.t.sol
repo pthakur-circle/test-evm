@@ -51,4 +51,65 @@ contract OlymEvmCctp is OlympixUnitTest("TokenMinter") {
 
    }
 
+
+    function test_mint_FailWhenCallerIsNotLocalTokenMessenger() public {
+        vm.startPrank(nonTokenMessenger);
+    
+        vm.expectRevert("Caller not local TokenMessenger");
+        tokenMinter.mint(remoteDomain, remoteTokenBytes32, mintRecipientAddress, 1);
+    
+        vm.stopPrank();
+    }
+
+    function test_mint_FailWhenMintTokenIsNotSupported() public {
+        vm.startPrank(localTokenMessenger);
+    
+        vm.expectRevert("Mint token not supported");
+        tokenMinter.mint(remoteDomain, remoteTokenBytes32, mintRecipientAddress, 1);
+    
+        vm.stopPrank();
+    }
+
+    function test_addLocalTokenMessenger_FailWhenNewLocalTokenMessengerIsZeroAddress() public {
+        vm.startPrank(minter1);
+    
+        vm.expectRevert("Invalid TokenMessenger address");
+        tokenMinter.addLocalTokenMessenger(address(0));
+    
+        vm.stopPrank();
+    }
+
+    function test_removeLocalTokenMessenger_FailWhenLocalTokenMessengerIsNotSet() public {
+        vm.startPrank(minter1);
+    
+        tokenMinter.removeLocalTokenMessenger();
+    
+        vm.expectRevert("No local TokenMessenger is set");
+        tokenMinter.removeLocalTokenMessenger();
+    
+        vm.stopPrank();
+    }
+
+    function test_setTokenController_SuccessfulSetTokenController() public {
+        vm.startPrank(minter1);
+    
+        address newTokenController = address(vm.addr(1511));
+        tokenMinter.setTokenController(newTokenController);
+    
+        assertEq(tokenMinter.tokenController(), newTokenController);
+    
+        vm.stopPrank();
+    }
+
+    function test_getLocalToken_SuccessfulGetLocalToken() public {
+        vm.startPrank(tokenController);
+    
+        tokenMinter.linkTokenPair(localTokenAddress, remoteDomain, remoteTokenBytes32);
+    
+        address localTokenResult = tokenMinter.getLocalToken(remoteDomain, remoteTokenBytes32);
+    
+        assertEq(localTokenResult, localTokenAddress);
+    
+        vm.stopPrank();
+    }
 }
