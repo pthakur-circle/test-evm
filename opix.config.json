@@ -1,0 +1,15 @@
+{
+    "recipientEmail": "pranjali.thakur@circle.com",
+    "coverageArgs": [],
+    "testArgs": [],
+    "buildArgs": [],
+    "opixTestDir": "test",
+    "testContracts": [
+      {
+        "subjectContractName": "TokenMinter",
+        "subjectContractPath": "src/TokenMinter.sol",
+        "testContractPath": "tests/OlymEvmCctp.t.sol",
+        "testContractName": "OlymEvmCctp"
+      }
+    ]
+}
